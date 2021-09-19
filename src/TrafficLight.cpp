@@ -70,7 +70,7 @@ void TrafficLight::cycleThroughPhases()
     // Also, the while-loop should use std::this_thread::sleep_for to wait 1ms between two cycles. 
 
     std::chrono::time_point<std::chrono::system_clock> lastUpdate;
-    long cycleDuration = 5000; // duration of a single phase cycle in millisecs
+    long cycleDuration = 5000; // duration of a single phase cycle in millisecs - initially
 
     // init stop watch
     lastUpdate = std::chrono::system_clock::now();
@@ -83,6 +83,12 @@ void TrafficLight::cycleThroughPhases()
         {
             _currentPhase = (_currentPhase == TrafficLightPhase::red)? TrafficLightPhase::green : TrafficLightPhase::red;
             _queue.send(std::move(_currentPhase));
+
+            std::random_device rd;
+            std::mt19937 eng(rd());
+            std::uniform_int_distribution<long> distr(4000, 6000);
+            cycleDuration = distr(eng);
+
             lastUpdate = std::chrono::system_clock::now();
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
